@@ -6,6 +6,7 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(leaflet)
+library(rsconnect)
 
 # Load datasets
 life_expectancy <- read.csv("data/life_expectancy_years.csv", stringsAsFactors = FALSE)
@@ -71,8 +72,82 @@ create_plot <- function(df1, df2) {
   return(result)
 }
 
-# TODO: Find a way to highlight specific countries in the chart using Shiny
-# eg. see where USA is on the curve.
+get_big_table <- function(main, addon) {
+  result <- main %>%
+    inner_join(addon, by = "country", suffix = c(".y", ".x"))
+  return(result)
+}
+
+# Function to easily round mixed char and int dataframes found online
+# Credit to Jeromy Anglim
+# Link: https://jeromyanglim.tumblr.com/post/50228877196/
+round_df <- function(x, digits) {
+  # round all numeric variables
+  # x: data frame 
+  # digits: number of digits to round
+  numeric_columns <- sapply(x, mode) == 'numeric'
+  x[numeric_columns] <-  round(x[numeric_columns], digits)
+  x
+}
+
+# Inner joining each table with itself to get a table of all categories
+big_table <- get_big_table(avg_life, avg_gov_spend_ratio)
+big_table <- get_big_table(big_table, avg_gov_spending)
+big_table <- get_big_table(big_table, avg_individual_spend)
+big_table <- get_big_table(big_table, avg_gov_share)
+big_table <- get_big_table(big_table, avg_private_share)
+
+# Format to be more readable
+big_table <- round_df(big_table, 1)
+colnames(big_table) <- c("Country",
+                         "Lifespan",
+                         "Healthcare to GDP Ratio",
+                         "Government Spending",
+                         "Individual Spending",
+                         "Government Share",
+                         "Private Share")
+
+
+# Labels to use for dynamic label selection in shiny
+x_vars <- c("avg_gov_spend_ratio", "avg_gov_spending", 
+            "avg_individual_spend", "avg_gov_share", "avg_private_share")
+titles <- c("Life Expectancy vs Ratio of Government Health Spending",
+            "Life Expectancy vs Government Spending",
+            "Life Expectancy vs Individual Spending",
+            "Life Expectancy vs Government Share of Health Spending",
+            "Life Expectancy vs Private Share of Health Spending"
+            )
+x_labels <- c("Percent of Total Government Spending Used on Healthcare",
+              "Amount Spent (USD)",
+              "Amount Spent (USD)",
+              "Percent of Healthcare Covered by Government",
+              "Percent of Healthcare Covered by Private Sources"
+              )
+y_labels <- c("Average Life Expectancy (years)",
+              "Average Life Expectancy (years)",
+              "Average Life Expectancy (years)",
+              "Average Life Expectancy (years)",
+              "Average Life Expectancy (years)"
+              )
+labels <- data.frame("x_var" = x_vars, "title" = titles, "x_label" = x_labels, 
+                     "y_label" = y_labels)
+
+
+
+# Example static plots used for testing
+life_vs_ratio <- create_plot(avg_life, avg_gov_spend_ratio) +
+  geom_smooth() +
+  labs(title = "Life Expectancy vs Ratio of Government Health Spending",
+       x = "Percent of Total Government Spending Used on Healthcare",
+       y = "Average Life Expectancy") 
+life_vs_ratio
+
+life_vs_gov_spend <- create_plot(avg_life, avg_gov_spending) +
+  geom_smooth() +
+  labs(title = "Life Expectancy vs Government Spending",
+       x = "Amount Spent (USD)",
+       y = "Average Life Expectancy (years)")
+life_vs_gov_spend
 
 life_vs_individial_spend <- create_plot(avg_life, avg_individual_spend) +
   geom_smooth() + 
@@ -81,12 +156,12 @@ life_vs_individial_spend <- create_plot(avg_life, avg_individual_spend) +
        y = "Average Life Expectancy (years)")
 life_vs_individial_spend
 
-life_vs_ratio <- create_plot(avg_life, avg_gov_spend_ratio) +
+life_vs_gov_share <- create_plot(avg_life, avg_gov_share) +
   geom_smooth() +
-  labs(title = "Life Expectancy vs Ratio of Government Health Spending",
-       x = "Percent of Total Government Spending Used on Healthcare",
-       y = "Average Life Expectancy")
-life_vs_ratio
+  labs(title = "Life Expectancy vs Government Share of Health Spending",
+       x = "Percent of Healthcare Covered by Government",
+       y = "Average Life Expectancy (years)")
+life_vs_gov_share
 
 life_vs_private_share <- create_plot(avg_life, avg_private_share) +
   geom_smooth() + 
@@ -95,16 +170,10 @@ life_vs_private_share <- create_plot(avg_life, avg_private_share) +
        y = "Average Life Expectancy (years)")
 life_vs_private_share
 
-life_vs_gov_share <- create_plot(avg_life, avg_gov_share) +
-  geom_smooth() +
-  labs(title = "Life Expectancy vs Government Share of Health Spending",
-       x = "Percent of Healthcare Covered by Government",
-       y = "Average Life Expectancy (years)")
-life_vs_gov_share
+# life_vs_oop <- create_plot(avg_life, avg_out_of_pocket) +
+#   geom_smooth() +
+#   labs(title = "Life Expectancy vs Out of Pocket Share",
+#        x = "Percent of Healthcare Covered by Out of Pocket Payments",
+#        y = "Average Life Expectancy (years)")
+# life_vs_oop
 
-life_vs_oop <- create_plot(avg_life, avg_out_of_pocket) +
-  geom_smooth() +
-  labs(title = "Life Expectancy vs Out of Pocket Share",
-       x = "Percent of Healthcare Covered by Out of Pocket Payments",
-       y = "Average Life Expectancy (years)")
-life_vs_oop
