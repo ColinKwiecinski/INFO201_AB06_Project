@@ -26,7 +26,8 @@ gov_share <-
   read.csv("data/government_share.csv", stringsAsFactors = FALSE)
 private_share <-
   read.csv("data/private_share.csv", stringsAsFactors = FALSE)
-
+UHC_data <-
+  read.csv("data/countries_with_UHC.csv", stringsAsFactors = FALSE)
 
 # Clean up the datasets
 remove_x <- function(df) {
@@ -62,6 +63,32 @@ get_avgs <- function(df) {
   return(result)
 }
 
+# remove useless columns and fix column names
+UHC_data <- UHC_data %>%
+  rename(country = colnames(UHC_data[1]),
+         hasUHC = colnames(UHC_data[4])) %>%
+  select(country, hasUHC)
+
+# Countries with Universal Healthcare
+has_UHC <- UHC_data %>%
+  filter(hasUHC == "Yes")
+
+# Countries without Universal Healthcare
+no_UHC <- UHC_data %>%
+  filter(hasUHC == "No")
+
+# Summary Stats
+num_with_UHC <- nrow(has_UHC)
+num_without_UHC <- nrow(no_UHC)
+
+# Returns a global average for a given category
+get_rounded_avg <- function(df, UHC_df) {
+  joined_df <- UHC_df %>%
+    inner_join(df, by = "country")
+  result <- round(mean(joined_df$Mean), 1)
+  return(result)
+}
+
 # Applies avg to all dataframes
 avg_life <- get_avgs(life_expectancy)
 avg_gov_spend_ratio <- get_avgs(gov_spending_ratio)
@@ -69,6 +96,8 @@ avg_gov_spending <- get_avgs(gov_spending_usd)
 avg_private_share <- get_avgs(private_share)
 avg_individual_spend <- get_avgs(individual_spending_usd)
 avg_gov_share <- get_avgs(gov_share)
+avg_out_of_pocket <- get_avgs(out_of_pocket_share)
+
 
 # Creates a plot from two avg df's that can be easily rendered by picking chart
 # type.
@@ -79,6 +108,65 @@ create_plot <- function(df1, df2) {
   return(result)
 }
 
+# Generates a single smoothed line curve with optional country point
+# df: the Indpendent variable dataframe
+# ci: a confidence interval 0-1
+# filtered_labels: used to match the variables and their labels
+# country_name: the country drawn by a single point
+single_plot <- function(df, ci, filtered_labels, country_name) {
+  country_point <- avg_life %>%
+    filter(country == country_name) %>%
+    inner_join(df, by = "country", suffix = c(".y", ".x"))
+  
+  create_plot(avg_life, df) +
+    geom_smooth(level = ci) +
+    labs(title = filtered_labels$title,
+         x = filtered_labels$x_label,
+         y = filtered_labels$y_label) +
+    geom_point(data = country_point,
+               size = 5)
+}
+
+# Generates a plot with two smoothed lines, and an optional country point
+# Lines are differentiated by if the country has UHC or not
+# df: the Indpendent variable dataframe
+# ci: a confidence interval 0-1
+# filtered_labels: used to match the variables and their labels
+# country_name: the country drawn by a single point
+double_plot <- function(df, ci, filtered_labels, country_name) {
+  # Joining the lists of countries with/without UHC with avg lifespan
+  has_UHC_joined <- has_UHC %>%
+    inner_join(avg_life, by = "country") %>%
+    inner_join(df, by = "country")
+  no_UHC_joined <- no_UHC %>%
+    inner_join(avg_life, by = "country") %>%
+    inner_join(df, by = "country")
+  
+  # Gets data for country point
+  country_point <- avg_life %>%
+    filter(country == country_name) %>%
+    inner_join(df, by = "country", suffix = c(".y", ".x"))
+  
+  # Generates double smooth plot and adds point on.
+  # mapping is inverted intentionally to solve issue caused by join
+  result <-
+    ggplot(has_UHC_joined, mapping = aes(x = Mean.y, y = Mean.x)) +
+    geom_smooth(level = ci) +
+    geom_smooth(data = no_UHC_joined,
+                color = "red",
+                level = ci) +
+    labs(title = filtered_labels$title,
+         x = filtered_labels$x_label,
+         y = filtered_labels$y_label) +
+    geom_point(
+      data = country_point,
+      size = 5,
+      mapping = aes(x = Mean.x, y = Mean.y)
+    )
+  return(result)
+}
+
+# Joins a dataframe to an already existing dataframe
 get_big_table <- function(main, addon) {
   result <- main %>%
     inner_join(addon, by = "country", suffix = c(".y", ".x"))
@@ -92,7 +180,7 @@ round_df <- function(x, digits) {
   # round all numeric variables
   # x: data frame
   # digits: number of digits to round
-  numeric_columns <- sapply(x, mode) == 'numeric'
+  numeric_columns <- sapply(x, mode) == "numeric"
   x[numeric_columns] <-  round(x[numeric_columns], digits)
   x
 }
@@ -103,6 +191,7 @@ big_table <- get_big_table(big_table, avg_gov_spending)
 big_table <- get_big_table(big_table, avg_individual_spend)
 big_table <- get_big_table(big_table, avg_gov_share)
 big_table <- get_big_table(big_table, avg_private_share)
+big_table <- get_big_table(big_table, UHC_data)
 
 # Format to be more readable
 big_table <- round_df(big_table, 1)
@@ -113,8 +202,10 @@ colnames(big_table) <- c(
   "Government Spending",
   "Individual Spending",
   "Government Share",
-  "Private Share"
+  "Private Share",
+  "Has Universal Healthcare"
 )
+
 
 # Labels to use for dynamic label selection in shiny
 x_vars <- c(
@@ -124,7 +215,6 @@ x_vars <- c(
   "avg_gov_share",
   "avg_private_share"
 )
-
 titles <-
   c(
     "Life Expectancy vs Ratio of Government Health Spending",
@@ -155,6 +245,7 @@ labels <-
     "x_label" = x_labels,
     "y_label" = y_labels
   )
+
 
 # Example static plots used for testing
 life_vs_ratio <- create_plot(avg_life, avg_gov_spend_ratio) +
@@ -192,3 +283,30 @@ life_vs_private_share <- create_plot(avg_life, avg_private_share) +
        x = "Percent of Healthcare Covered by Private Sources",
        y = "Average Life Expectancy (years)")
 life_vs_private_share
+
+
+# EXPERIMENTAL STACKED BAR CHART CODE
+# CURRENTLY USELESS
+
+# Create stacked bar chart for expediture
+# countries <- c("United States", "Brazil", "Algeria", "United Kingdom", "Afghanistan", "Japan")
+#
+# joined_df <- avg_individual_spend %>%
+#   inner_join(avg_life, by = "country") %>%
+#   rename(Individual_Spending = Mean.x, Government_Spending = Mean.y) %>%
+#   filter(country %in% countries) %>%
+#   gather(key, value, -country)
+# # joined_df[,"Individual_Spending"] <- joined_df$Individual_Spending / 100
+# # asdfsafsd <- mean(joined_df$Government_Spending)
+#
+# stacked_bar <- ggplot(data = joined_df, mapping = aes(x = country, y = value, fill = key)) +
+#   geom_bar(stat = "identity")
+# #  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = mean(joined_df$Government_Spending))
+# stacked_bar
+#
+# reduced_life <- avg_life %>%
+#   filter(country %in% countries)
+#
+# life_exp_bar <- ggplot(data = reduced_life, mapping = aes(x = country, y = Mean)) +
+#   geom_bar(stat = "identity")
+# life_exp_bar
