@@ -8,14 +8,6 @@ shinyUI(fluidPage(
 
     sidebarLayout(
         sidebarPanel(
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-            
->>>>>>> Stashed changes
-=======
-            
->>>>>>> Stashed changes
             # Chart selector
             selectInput(
                 inputId = "x_axis",
