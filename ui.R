@@ -1,5 +1,6 @@
 
 
+
 library(shiny)
 library(markdown)
 source("source/analysis.R")
@@ -23,12 +24,24 @@ navbarPage(
                         "Healthcare to GDP Ratio" = "avg_gov_spend_ratio"
                     )
                 ),
-                
                 # Input to put a point for a specific country on the plot
                 textInput(
                     inputId = "country_point",
                     label = "Country",
                     placeholder = "United States"
+                ),
+                radioButtons(
+                    inputId = "use_double_plot",
+                    label = "Show difference between UHC countries",
+                    choices = list("No split" = 0, "UHC Split" = 1),
+                    selected = 0
+                ),
+                sliderInput(
+                    inputId = "conf_int",
+                    label = "Confidence Interval",
+                    min = 0,
+                    max = 1,
+                    value = 0.95
                 )
             ),
             

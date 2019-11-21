@@ -238,6 +238,7 @@ y_labels <- c(
   "Average Life Expectancy (years)",
   "Average Life Expectancy (years)"
 )
+
 labels <-
   data.frame(
     "x_var" = x_vars,
