@@ -9,14 +9,25 @@ library(leaflet)
 library(rsconnect)
 
 # Load datasets
-life_expectancy <- read.csv("data/life_expectancy_years.csv", stringsAsFactors = FALSE)
-individual_spending_usd <- read.csv("data/total_health_spending_per_person_us.csv", stringsAsFactors = FALSE)
-gov_spending_usd <- read.csv("data/government_health_spending_per_person_us.csv", stringsAsFactors = FALSE)
-gov_spending_ratio <- read.csv("data/government_health_spending_of_total_gov_spending_percent.csv", stringsAsFactors = FALSE)
-out_of_pocket_share <- read.csv("data/out_of_pocket_share_of_total_health_spending_percent.csv", stringsAsFactors = FALSE)
-gov_share <- read.csv("data/government_share.csv", stringsAsFactors = FALSE)
-private_share <- read.csv("data/private_share.csv", stringsAsFactors = FALSE)
-UHC_data <- read.csv("data/countries_with_UHC.csv", stringsAsFactors = FALSE)
+life_expectancy <-
+  read.csv("data/life_expectancy_years.csv", stringsAsFactors = FALSE)
+individual_spending_usd <-
+  read.csv("data/total_health_spending_per_person_us.csv",
+           stringsAsFactors = FALSE)
+gov_spending_usd <-
+  read.csv("data/government_health_spending_per_person_us.csv",
+           stringsAsFactors = FALSE)
+gov_spending_ratio <-
+  read.csv(
+    "data/government_health_spending_of_total_gov_spending_percent.csv",
+    stringsAsFactors = FALSE
+  )
+gov_share <-
+  read.csv("data/government_share.csv", stringsAsFactors = FALSE)
+private_share <-
+  read.csv("data/private_share.csv", stringsAsFactors = FALSE)
+UHC_data <-
+  read.csv("data/countries_with_UHC.csv", stringsAsFactors = FALSE)
 
 # Clean up the datasets
 remove_x <- function(df) {
@@ -32,7 +43,6 @@ gov_spending_usd <- remove_x(gov_spending_usd)
 gov_spending_ratio <- remove_x(gov_spending_ratio)
 private_share <- remove_x(private_share)
 gov_share <- remove_x(gov_share)
-out_of_pocket_share <- remove_x(out_of_pocket_share)
 
 # Reduce to only years between 1995 to 2010 so that all tables match
 fix_years <- function(df) {
@@ -49,7 +59,7 @@ life_expectancy <- fix_years(life_expectancy)
 # https://stackoverflow.com/questions/10945703/
 get_avgs <- function(df) {
   result <- df %>%
-    transmute(country, Mean = rowMeans(select(., -country), na.rm = TRUE))
+    transmute(country, Mean = rowMeans(select(.,-country), na.rm = TRUE))
   return(result)
 }
 
@@ -110,14 +120,11 @@ single_plot <- function(df, ci, filtered_labels, country_name) {
   
   create_plot(avg_life, df) +
     geom_smooth(level = ci) +
-    labs(
-      title = filtered_labels$title,
-      x = filtered_labels$x_label,
-      y = filtered_labels$y_label) +
-    geom_point(
-      data = country_point,
-      size = 5
-    )
+    labs(title = filtered_labels$title,
+         x = filtered_labels$x_label,
+         y = filtered_labels$y_label) +
+    geom_point(data = country_point,
+               size = 5)
 }
 
 # Generates a plot with two smoothed lines, and an optional country point
@@ -140,17 +147,22 @@ double_plot <- function(df, ci, filtered_labels, country_name) {
     filter(country == country_name) %>%
     inner_join(df, by = "country", suffix = c(".y", ".x"))
   
-  # Generates double smooth plot and adds point on. 
+  # Generates double smooth plot and adds point on.
   # mapping is inverted intentionally to solve issue caused by join
-  result <- ggplot(has_UHC_joined, mapping = aes(x = Mean.y, y = Mean.x)) +
+  result <-
+    ggplot(has_UHC_joined, mapping = aes(x = Mean.y, y = Mean.x)) +
     geom_smooth(level = ci) +
-    geom_smooth(data = no_UHC_joined, color = "red", level = ci) +
-    labs(
-      title = filtered_labels$title,
-      x = filtered_labels$x_label,
-      y = filtered_labels$y_label
-    ) +
-    geom_point(data = country_point, size = 5, mapping = aes(x = Mean.x, y = Mean.y))
+    geom_smooth(data = no_UHC_joined,
+                color = "red",
+                level = ci) +
+    labs(title = filtered_labels$title,
+         x = filtered_labels$x_label,
+         y = filtered_labels$y_label) +
+    geom_point(
+      data = country_point,
+      size = 5,
+      mapping = aes(x = Mean.x, y = Mean.y)
+    )
   return(result)
 }
 
@@ -183,43 +195,56 @@ big_table <- get_big_table(big_table, UHC_data)
 
 # Format to be more readable
 big_table <- round_df(big_table, 1)
-colnames(big_table) <- c("Country",
-                         "Lifespan",
-                         "Healthcare to GDP Ratio",
-                         "Government Spending",
-                         "Individual Spending",
-                         "Government Share",
-                         "Private Share",
-                         "Has Universal Healthcare")
+colnames(big_table) <- c(
+  "Country",
+  "Lifespan",
+  "Healthcare to GDP Ratio",
+  "Government Spending",
+  "Individual Spending",
+  "Government Share",
+  "Private Share",
+  "Has Universal Healthcare"
+)
 
 
 # Labels to use for dynamic label selection in shiny
-x_vars <- c("avg_gov_spend_ratio", "avg_gov_spending",
-            "avg_individual_spend", "avg_gov_share", "avg_private_share")
-titles <- c("Life Expectancy vs Ratio of Government Health Spending",
-            "Life Expectancy vs Government Spending",
-            "Life Expectancy vs Individual Spending",
-            "Life Expectancy vs Government Share of Health Spending",
-            "Life Expectancy vs Private Share of Health Spending"
+x_vars <- c(
+  "avg_gov_spend_ratio",
+  "avg_gov_spending",
+  "avg_individual_spend",
+  "avg_gov_share",
+  "avg_private_share"
 )
-x_labels <- c("Percent of Total Government Spending Used on Healthcare",
-              "Amount Spent (USD)",
-              "Amount Spent (USD)",
-              "Percent of Healthcare Covered by Government",
-              "Percent of Healthcare Covered by Private Sources"
+titles <-
+  c(
+    "Life Expectancy vs Ratio of Government Health Spending",
+    "Life Expectancy vs Government Spending",
+    "Life Expectancy vs Individual Spending",
+    "Life Expectancy vs Government Share of Health Spending",
+    "Life Expectancy vs Private Share of Health Spending"
+  )
+x_labels <-
+  c(
+    "Percent of Total Government Spending Used on Healthcare",
+    "Amount Spent (USD)",
+    "Amount Spent (USD)",
+    "Percent of Healthcare Covered by Government",
+    "Percent of Healthcare Covered by Private Sources"
+  )
+y_labels <- c(
+  "Average Life Expectancy (years)",
+  "Average Life Expectancy (years)",
+  "Average Life Expectancy (years)",
+  "Average Life Expectancy (years)",
+  "Average Life Expectancy (years)"
 )
-y_labels <- c("Average Life Expectancy (years)",
-              "Average Life Expectancy (years)",
-              "Average Life Expectancy (years)",
-              "Average Life Expectancy (years)",
-              "Average Life Expectancy (years)"
-)
-labels <- data.frame("x_var" = x_vars, "title" = titles, "x_label" = x_labels,
-                     "y_label" = y_labels)
-
-
-
-
+labels <-
+  data.frame(
+    "x_var" = x_vars,
+    "title" = titles,
+    "x_label" = x_labels,
+    "y_label" = y_labels
+  )
 
 
 # Example static plots used for testing
@@ -237,7 +262,8 @@ life_vs_gov_spend <- create_plot(avg_life, avg_gov_spending) +
        y = "Average Life Expectancy (years)")
 life_vs_gov_spend
 
-life_vs_individial_spend <- create_plot(avg_life, avg_individual_spend) +
+life_vs_individial_spend <-
+  create_plot(avg_life, avg_individual_spend) +
   geom_smooth() +
   labs(title = "Life Expectancy vs Individual Spending",
        x = "Amount Spent (USD)",
@@ -258,13 +284,6 @@ life_vs_private_share <- create_plot(avg_life, avg_private_share) +
        y = "Average Life Expectancy (years)")
 life_vs_private_share
 
-# # Not planning on using this viz
-# life_vs_oop <- create_plot(avg_life, avg_out_of_pocket) +
-#   geom_smooth() +
-#   labs(title = "Life Expectancy vs Out of Pocket Share",
-#        x = "Percent of Healthcare Covered by Out of Pocket Payments",
-#        y = "Average Life Expectancy (years)")
-# life_vs_oop
 
 
 
@@ -273,7 +292,7 @@ life_vs_private_share
 
 # Create stacked bar chart for expediture
 # countries <- c("United States", "Brazil", "Algeria", "United Kingdom", "Afghanistan", "Japan")
-# 
+#
 # joined_df <- avg_individual_spend %>%
 #   inner_join(avg_life, by = "country") %>%
 #   rename(Individual_Spending = Mean.x, Government_Spending = Mean.y) %>%
@@ -281,16 +300,15 @@ life_vs_private_share
 #   gather(key, value, -country)
 # # joined_df[,"Individual_Spending"] <- joined_df$Individual_Spending / 100
 # # asdfsafsd <- mean(joined_df$Government_Spending)
-# 
+#
 # stacked_bar <- ggplot(data = joined_df, mapping = aes(x = country, y = value, fill = key)) +
-#   geom_bar(stat = "identity") 
+#   geom_bar(stat = "identity")
 # #  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = mean(joined_df$Government_Spending))
 # stacked_bar
-# 
+#
 # reduced_life <- avg_life %>%
 #   filter(country %in% countries)
-# 
+#
 # life_exp_bar <- ggplot(data = reduced_life, mapping = aes(x = country, y = Mean)) +
 #   geom_bar(stat = "identity")
 # life_exp_bar
-
