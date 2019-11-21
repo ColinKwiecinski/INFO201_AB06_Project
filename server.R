@@ -13,22 +13,20 @@ shinyServer(function(input, output) {
         filtered_labels <- labels %>%
             filter(x_var == input$x_axis)
         
-        # Determines values for individual country selection
-        country_point <- avg_life %>%
-            filter(country == input$country_point) %>%
-            inner_join(x_axis, by = "country", suffix = c(".y", ".x"))
+        # Boolean to split plot
+        split_plot <- input$use_double_plot
         
-        # Generates smoothed plot with 95% CI and loess method curve
-        create_plot(avg_life, x_axis) +
-            geom_smooth() +
-            labs(
-                title = filtered_labels$title,
-                 x = filtered_labels$x_label,
-                 y = filtered_labels$y_label) +
-            geom_point(
-                data = country_point,
-                size = 4
-            )
+        # Confidence interval
+        ci <- input$conf_int
+        
+        country_name <- input$country_point
+        
+        # Generates smoothed plots with 95% CI and loess method curve
+        if(split_plot == 0) {
+            single_plot(x_axis, ci, filtered_labels, country_name)
+        } else {
+            double_plot(x_axis, ci, filtered_labels, country_name)
+        }
     })
     
     output$table <- renderDataTable(big_table,
