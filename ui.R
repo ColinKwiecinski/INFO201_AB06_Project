@@ -24,19 +24,6 @@ shinyUI(fluidPage(
                 inputId = "country_point",
                 label = "Country",
                 placeholder = "United States"
-            ),
-            radioButtons(
-                inputId = "use_double_plot",
-                label = "Show difference between UHC countries",
-                choices = list("No split" = 0, "UHC Split" = 1),
-                selected = 0
-            ),
-            sliderInput(
-                inputId = "conf_int",
-                label = "Confidence Interval",
-                min = 0, 
-                max = 1,
-                value = 0.95
             )
         ),
 
