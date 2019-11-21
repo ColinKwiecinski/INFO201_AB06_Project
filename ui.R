@@ -1,13 +1,13 @@
 
 library(shiny)
+library(markdown)
 source("source/analysis.R")
 
-shinyUI(fluidPage(
-
-    titlePanel("Project Life"),
-
-    sidebarLayout(
-        sidebarPanel(
+navbarPage("Project Life Navigation",
+           tabPanel("Plot",
+           titlePanel("Project Life"),
+           sidebarLayout(
+             sidebarPanel(
             # Chart selector
             selectInput(
                 inputId = "x_axis",
@@ -19,6 +19,7 @@ shinyUI(fluidPage(
                             "Healthcare to GDP Ratio" = "avg_gov_spend_ratio"
                             )
             ),
+            
             # Input to put a point for a specific country on the plot
             textInput(
                 inputId = "country_point",
@@ -31,7 +32,13 @@ shinyUI(fluidPage(
         # TODO: Make it stylish
         mainPanel(
             plotOutput("dynamic_plot"),
-            dataTableOutput("table")
-        )
-    )
-))
+            dataTableOutput("table"),
+    ),
+    
+    )), tabPanel("Background & Research Question", "Research Questions: Does government spending on healthcare per person in a country has a direct correlation with the life expectancy of that same country?
+What are some patterns and relationships regarding life expectancy of different countries with the spending of those countries?  
+"),
+        tabPanel("Conclusion", ),
+        tabPanel("About Us", )
+)
+
