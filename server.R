@@ -1,11 +1,9 @@
-
 library(shiny)
 source("source/analysis.R")
 
 shinyServer(function(input, output) {
-
     output$dynamic_plot <- renderPlot({
-        # Pulls input chart as correct variable type 
+        # Pulls input chart as correct variable type
         x_axis <- get(input$x_axis)
         
         # Gathers correct labels for the plot
@@ -22,17 +20,17 @@ shinyServer(function(input, output) {
             geom_smooth() +
             labs(
                 title = filtered_labels$title,
-                 x = filtered_labels$x_label,
-                 y = filtered_labels$y_label) +
-            geom_point(
-                data = country_point,
-                size = 4
-            )
+                x = filtered_labels$x_label,
+                y = filtered_labels$y_label
+            ) +
+            geom_point(data = country_point,
+                       size = 4)
     })
     
     output$table <- renderDataTable(big_table,
-                                options = list(
-                                    lengthMenu = c(10, 25, 50, 100, 200),
-                                    pageLength = 10))
-
+                                    options = list(
+                                        lengthMenu = c(10, 25, 50, 100, 200),
+                                        pageLength = 10
+                                    ))
+    
 })
