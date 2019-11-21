@@ -7,7 +7,11 @@ navbarPage(
     theme = shinythemes::shinytheme("flatly"),
     title = "Project Life",
     
-    tabPanel("Home"),
+    tabPanel("Home",
+             h2("Content placeholder for homepage."),
+             h4("This section will provide an introduction to the project to help
+                familiarize the user with the problem at hand and what prior knowledge
+                may be required to understand the information.")),
     
     tabPanel(
         "Plot",
@@ -81,8 +85,27 @@ navbarPage(
     ),
     
     
-    tabPanel("Conclusion"),
+    tabPanel("Conclusion",
+             strong(
+                 p(
+                     "1. This project is able to take in 2 values that are very crucial in the field of healthcare,
+            which are its cost and how effective the healthcare system which is show through life expectancy. This project is also did a good job at looking at private spending versus government spending and included data set throughout the world,
+            not just the U.S. Its comprehensiveness is definitely one of the project's strength. However, the project still have weaknesses, the most important is that the dataset can only give us a correlation between spending and life expectancy rather than finding a cause-and-effect relationship between these two values."
+                 ),
+                 p(
+                     "2. So far the main lesson we learned is that there is a direct posstive correlation between spending, no what private or through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending."
+                 ),
+                 p(
+                     "3. This project has a lot of potential for more future research in the field of healthcare and government spendings. Future works can include deeper look into how healthcare spending is allocated or if there is other factor involved in correlation with life expectancy."
+                 )
+             )),
     
     
-    tabPanel("About Us")
+    tabPanel(
+        "About Us",
+        h2("Group Members"),
+        p(
+            "Khoi Khong (khoik@uw.edu), Colin Kwiecinksi (colinkwi@uw.edu), Shivaum Kumar (kumars7@uw.edu)"
+        )
+    )
 )
