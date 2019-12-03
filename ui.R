@@ -9,32 +9,40 @@ navbarPage(
     
     tabPanel(
         "Home",
-        h2("How does individual and government spending relate to life expentancy?"),
-        h4(
-            strong(
-                p("The problem situation is investigating how individual and government spending relates to life expectancy.
-Some of the direct stakeholders in this situation are the general population, healthcare companies, and government
-agencies that determine funding for healthcare. The background for this is the frequent policy discussions in US government on universal healthcare. Some of the ethics and tensions involved are that some groups would not want to pay increased taxes to fund universal healthcare, while other groups struggle to afford healthcare and believe it is a human right to have access to such resources. Some indirect stakeholders could be pharmaceutical companies or insurance companies that would lobby against
-universal healthcare, and also the people affected by overpriced healthcare. Different countries around the world might see the
-data and adjust new laws in their country to help their life expectancy go in the direction they want. The non-targeted use of
-this data can be beneficial to countries around the world.
-                "),
-                p("Our main research questions are:"),
-                p(
-                    "Does government spending on healthcare per person
+        h2(
+            "How does individual and government spending relate to life expentancy?"
+        ),
+        p(
+            "The problem situation is investigating how individual and government spending relates to life expectancy.
+            Some of the direct stakeholders in this situation are the general population, healthcare companies, and government
+            agencies that determine funding for healthcare."
+        ),
+        p(
+            " The background for this is the frequent policy discussions in US government on universal healthcare. Some of the ethics and tensions involved are that some groups would not want to pay increased taxes to fund universal healthcare, while other groups struggle to afford healthcare and believe it is a human right to have access to such resources. Some indirect stakeholders could be pharmaceutical companies or insurance companies that would lobby against
+            universal healthcare, and also the people affected by overpriced healthcare."
+        ),
+        p(
+            " Different countries around the world might see the
+            data and adjust new laws in their country to help their life expectancy go in the direction they want. The non-targeted use of
+            this data can be beneficial to countries around the world."
+        ),
+        hr(),
+        h2(p("Our main research questions are:")),
+        p(
+            "Does government spending on healthcare per person
           in a country has a direct correlation with the life expectancy of that
           same country?"
-                ),
-                p(
-                    "What are some patterns and relationships regarding life
+        ),
+        p(
+            "What are some patterns and relationships regarding life
         expectancy of different countries with the spending of those countries?"
-                )
-            )
         )
+        
+        
     ),
     
     tabPanel(
-        "Plot",
+        "Visualizations",
         titlePanel("Data Visualizations"),
         
         # Using tabsetPanel to subdivide the plots tab into the main plot and the table
@@ -42,7 +50,8 @@ this data can be beneficial to countries around the world.
             type = "tabs",
             tabPanel("Plot",
                      strong(
-                         p("This section shows the correlation between several independent
+                         p(
+                             "This section shows the correlation between several independent
                            variables and the dependent variable of life expectancy. Each
                            plot is a scatterplot that has been fit to a loess curve to
                            highlight the trend in the data. The user can select between
@@ -50,8 +59,9 @@ this data can be beneficial to countries around the world.
                            country on the chart, chose whether or not to show the difference
                            between countries with Universal Healthcare laws, and can adjust
                            the confidence interval of the curve (the shaded region).
-                           ")
-                         ),
+                           "
+                         )
+                     ),
                      # Sidebar viz controls
                      sidebarLayout(
                          sidebarPanel(
@@ -103,30 +113,30 @@ this data can be beneficial to countries around the world.
                          )
                      ),
                      dataTableOutput("table")),
-            tabPanel("Bar Chart",
-                     strong(
-                         p(
-                             "This visualization is so that the user can compare the relative 
-                             healthcare spending of multiple countries. Using the sidebar, one 
+            tabPanel(
+                "Bar Chart",
+                strong(
+                    p(
+                        "This visualization is so that the user can compare the relative
+                             healthcare spending of multiple countries. Using the sidebar, one
                              can select any country in the dataset, and plot it on the bar chart.
-                             By default, some prominent countries are selected to give a quick comparison. 
-                             The user can also hover over each bar to see the exact amount spent, and the 
+                             By default, some prominent countries are selected to give a quick comparison.
+                             The user can also hover over each bar to see the exact amount spent, and the
                              average lifespan for that country. Additonally, the user may click on the
-                             labels in the legend to only show one type of spending. " 
-                         )
-                     ),
-                     sidebarLayout(
-                         sidebarPanel(
-                             selectInput(
-                                 inputId = "get_countries",
-                                 label = "Select Countries",
-                                 choices = big_table$Country,
-                                 multiple = TRUE,
-                                 selected = default_countries
-                             )
-                         ),
-                         mainPanel(plotlyOutput("bar_plot"))
-                     ))
+                             labels in the legend to only show one type of spending. "
+                    )
+                ),
+                sidebarLayout(sidebarPanel(
+                    selectInput(
+                        inputId = "get_countries",
+                        label = "Select Countries",
+                        choices = big_table$Country,
+                        multiple = TRUE,
+                        selected = default_countries
+                    )
+                ),
+                mainPanel(plotlyOutput("bar_plot")))
+            )
         )
     ),
     
@@ -151,11 +161,11 @@ this data can be beneficial to countries around the world.
              )),
     
     
-    tabPanel(
-        "About Us",
-        h2("Group Members"),
-        p(
-            "Khoi Khong (khoik@uw.edu), Colin Kwiecinksi (colinkwi@uw.edu), Shivaum Kumar (kumars7@uw.edu)"
-        )
-    )
+    tabPanel("About Us",
+             h2("Group Members"),
+             strong(
+                 p("Khoi Khong (khoik@uw.edu)"),
+                 p("Colin Kwiecinski (colinkwi@uw.edu)"),
+                 p("Shivaum Kumar (kumars7@uw.edu)")
+             ))
 )
