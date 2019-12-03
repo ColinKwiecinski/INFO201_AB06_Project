@@ -9,11 +9,27 @@ navbarPage(
     
     tabPanel(
         "Home",
-        h2("Content placeholder for homepage."),
+        h2("How does individual and government spending relate to life expentancy?"),
         h4(
-            "This section will provide an introduction to the project to help
-                familiarize the user with the problem at hand and what prior knowledge
-                may be required to understand the information."
+            strong(
+                p("The problem situation is investigating how individual and government spending relates to life expectancy.
+Some of the direct stakeholders in this situation are the general population, healthcare companies, and government
+agencies that determine funding for healthcare. The background for this is the frequent policy discussions in US government on universal healthcare. Some of the ethics and tensions involved are that some groups would not want to pay increased taxes to fund universal healthcare, while other groups struggle to afford healthcare and believe it is a human right to have access to such resources. Some indirect stakeholders could be pharmaceutical companies or insurance companies that would lobby against
+universal healthcare, and also the people affected by overpriced healthcare. Different countries around the world might see the
+data and adjust new laws in their country to help their life expectancy go in the direction they want. The non-targeted use of
+this data can be beneficial to countries around the world.
+                "),
+                p("Our main research questions are:"),
+                p(
+                    "Does government spending on healthcare per person
+          in a country has a direct correlation with the life expectancy of that
+          same country?"
+                ),
+                p(
+                    "What are some patterns and relationships regarding life
+        expectancy of different countries with the spending of those countries?"
+                )
+            )
         )
     ),
     
@@ -112,23 +128,6 @@ navbarPage(
                          mainPanel(plotlyOutput("bar_plot"))
                      ))
         )
-    ),
-    
-    tabPanel(
-        "Background & Research Question",
-        h2("Research Questions:"),
-        strong(
-            p(
-                "Does government spending on healthcare per person
-          in a country has a direct correlation with the life expectancy of that
-          same country?"
-            ),
-            p(
-                "What are some patterns and relationships regarding life
-        expectancy of different countries with the spending of those countries?"
-            )
-        )
-        
     ),
     
     
