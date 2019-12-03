@@ -36,9 +36,16 @@ navbarPage(
         p(
             "What are some patterns and relationships regarding life
         expectancy of different countries with the spending of those countries?"
+        ),
+        hr(),
+        h3("Important Links"),
+        h4(
+            p(tags$a(href = "https://github.com/ColinKwiecinski/INFO201_AB06_Project", "Github Repo")),
+            
+            p(tags$a(href = "https://github.com/ColinKwiecinski/INFO201_AB06_Project/wiki/Proposal", "Project Proposal")),
+            
+            p(tags$a(href = "https://github.com/ColinKwiecinski/INFO201_AB06_Project/wiki/Report", "Technical Report"))
         )
-        
-        
     ),
     
     tabPanel(
@@ -60,7 +67,8 @@ navbarPage(
                            between countries with Universal Healthcare laws, and can adjust
                            the confidence interval of the curve (the shaded region).
                            "
-                         )
+                         ) 
+                         
                      ),
                      # Sidebar viz controls
                      sidebarLayout(
