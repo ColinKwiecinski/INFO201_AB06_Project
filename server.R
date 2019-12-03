@@ -20,7 +20,7 @@ shinyServer(function(input, output) {
         country_name <- input$country_point
         
         # Generates smoothed plots with 95% CI and loess method curve
-        if(split_plot == 0) {
+        if (split_plot == 0) {
             single_plot(x_axis, ci, filtered_labels, country_name)
         } else {
             double_plot(x_axis, ci, filtered_labels, country_name)
@@ -32,5 +32,9 @@ shinyServer(function(input, output) {
                                         lengthMenu = c(10, 25, 50, 100, 200),
                                         pageLength = 10))
     
+    
+    output$bar_plot <- renderPlotly({
+        country_list <- input$get_countries
+        create_stacked_bar(big_table, country_list)
+    })
 })
-

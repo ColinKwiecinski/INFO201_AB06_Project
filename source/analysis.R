@@ -5,8 +5,8 @@ library(lintr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(leaflet)
 library(rsconnect)
+library(plotly)
 
 # Load datasets
 life_expectancy <-
@@ -26,7 +26,7 @@ gov_share <-
   read.csv("data/government_share.csv", stringsAsFactors = FALSE)
 private_share <-
   read.csv("data/private_share.csv", stringsAsFactors = FALSE)
-UHC_data <-
+uhc_data <-
   read.csv("data/countries_with_UHC.csv", stringsAsFactors = FALSE)
 
 # Clean up the datasets
@@ -54,36 +54,37 @@ fix_years <- function(df) {
 # Reduce to only 1995:2010 year range
 life_expectancy <- fix_years(life_expectancy)
 
+
 # Averages each value for the 15 year span
 # Source for how to use transmute:
 # https://stackoverflow.com/questions/10945703/
 get_avgs <- function(df) {
   result <- df %>%
-    transmute(country, Mean = rowMeans(select(.,-country), na.rm = TRUE))
+    transmute(country, Mean = rowMeans(select(., -country), na.rm = TRUE))
   return(result)
 }
 
 # remove useless columns and fix column names
-UHC_data <- UHC_data %>%
-  rename(country = colnames(UHC_data[1]),
-         hasUHC = colnames(UHC_data[4])) %>%
-  select(country, hasUHC)
+uhc_data <- uhc_data %>%
+  rename(country = colnames(uhc_data[1]),
+         hasuhc = colnames(uhc_data[4])) %>%
+  select(country, hasuhc)
 
 # Countries with Universal Healthcare
-has_UHC <- UHC_data %>%
-  filter(hasUHC == "Yes")
+has_uhc <- uhc_data %>%
+  filter(hasuhc == "Yes")
 
 # Countries without Universal Healthcare
-no_UHC <- UHC_data %>%
-  filter(hasUHC == "No")
+no_uhc <- uhc_data %>%
+  filter(hasuhc == "No")
 
 # Summary Stats
-num_with_UHC <- nrow(has_UHC)
-num_without_UHC <- nrow(no_UHC)
+num_with_uhc <- nrow(has_uhc)
+num_without_uhc <- nrow(no_uhc)
 
 # Returns a global average for a given category
-get_rounded_avg <- function(df, UHC_df) {
-  joined_df <- UHC_df %>%
+get_rounded_avg <- function(df, uhc_df) {
+  joined_df <- uhc_df %>%
     inner_join(df, by = "country")
   result <- round(mean(joined_df$Mean), 1)
   return(result)
@@ -96,8 +97,6 @@ avg_gov_spending <- get_avgs(gov_spending_usd)
 avg_private_share <- get_avgs(private_share)
 avg_individual_spend <- get_avgs(individual_spending_usd)
 avg_gov_share <- get_avgs(gov_share)
-avg_out_of_pocket <- get_avgs(out_of_pocket_share)
-
 
 # Creates a plot from two avg df's that can be easily rendered by picking chart
 # type.
@@ -117,28 +116,28 @@ single_plot <- function(df, ci, filtered_labels, country_name) {
   country_point <- avg_life %>%
     filter(country == country_name) %>%
     inner_join(df, by = "country", suffix = c(".y", ".x"))
-  
-  create_plot(avg_life, df) +
+  result <- create_plot(avg_life, df) +
     geom_smooth(level = ci) +
     labs(title = filtered_labels$title,
          x = filtered_labels$x_label,
          y = filtered_labels$y_label) +
     geom_point(data = country_point,
                size = 5)
+  return(result)
 }
 
 # Generates a plot with two smoothed lines, and an optional country point
-# Lines are differentiated by if the country has UHC or not
+# Lines are differentiated by if the country has uhc or not
 # df: the Indpendent variable dataframe
 # ci: a confidence interval 0-1
 # filtered_labels: used to match the variables and their labels
 # country_name: the country drawn by a single point
 double_plot <- function(df, ci, filtered_labels, country_name) {
-  # Joining the lists of countries with/without UHC with avg lifespan
-  has_UHC_joined <- has_UHC %>%
+  # Joining the lists of countries with/without uhc with avg lifespan
+  has_uhc_joined <- has_uhc %>%
     inner_join(avg_life, by = "country") %>%
     inner_join(df, by = "country")
-  no_UHC_joined <- no_UHC %>%
+  no_uhc_joined <- no_uhc %>%
     inner_join(avg_life, by = "country") %>%
     inner_join(df, by = "country")
   
@@ -150,9 +149,9 @@ double_plot <- function(df, ci, filtered_labels, country_name) {
   # Generates double smooth plot and adds point on.
   # mapping is inverted intentionally to solve issue caused by join
   result <-
-    ggplot(has_UHC_joined, mapping = aes(x = Mean.y, y = Mean.x)) +
+    ggplot(has_uhc_joined, mapping = aes(x = Mean.y, y = Mean.x)) +
     geom_smooth(level = ci) +
-    geom_smooth(data = no_UHC_joined,
+    geom_smooth(data = no_uhc_joined,
                 color = "red",
                 level = ci) +
     labs(title = filtered_labels$title,
@@ -169,7 +168,7 @@ double_plot <- function(df, ci, filtered_labels, country_name) {
 # Joins a dataframe to an already existing dataframe
 get_big_table <- function(main, addon) {
   result <- main %>%
-    inner_join(addon, by = "country", suffix = c(".y", ".x"))
+    left_join(addon, by = "country", suffix = c(".y", ".x"))
   return(result)
 }
 
@@ -191,7 +190,7 @@ big_table <- get_big_table(big_table, avg_gov_spending)
 big_table <- get_big_table(big_table, avg_individual_spend)
 big_table <- get_big_table(big_table, avg_gov_share)
 big_table <- get_big_table(big_table, avg_private_share)
-big_table <- get_big_table(big_table, UHC_data)
+big_table <- get_big_table(big_table, uhc_data)
 
 # Format to be more readable
 big_table <- round_df(big_table, 1)
@@ -285,29 +284,39 @@ life_vs_private_share <- create_plot(avg_life, avg_private_share) +
        y = "Average Life Expectancy (years)")
 life_vs_private_share
 
+default_countries <-
+  c(
+    "United States",
+    "United Kingdom",
+    "China",
+    "Russia",
+    "Japan",
+    "Denmark",
+    "Germany",
+    "Canada"
+  )
 
-# EXPERIMENTAL STACKED BAR CHART CODE
-# CURRENTLY USELESS
-
-# Create stacked bar chart for expediture
-# countries <- c("United States", "Brazil", "Algeria", "United Kingdom", "Afghanistan", "Japan")
-#
-# joined_df <- avg_individual_spend %>%
-#   inner_join(avg_life, by = "country") %>%
-#   rename(Individual_Spending = Mean.x, Government_Spending = Mean.y) %>%
-#   filter(country %in% countries) %>%
-#   gather(key, value, -country)
-# # joined_df[,"Individual_Spending"] <- joined_df$Individual_Spending / 100
-# # asdfsafsd <- mean(joined_df$Government_Spending)
-#
-# stacked_bar <- ggplot(data = joined_df, mapping = aes(x = country, y = value, fill = key)) +
-#   geom_bar(stat = "identity")
-# #  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = mean(joined_df$Government_Spending))
-# stacked_bar
-#
-# reduced_life <- avg_life %>%
-#   filter(country %in% countries)
-#
-# life_exp_bar <- ggplot(data = reduced_life, mapping = aes(x = country, y = Mean)) +
-#   geom_bar(stat = "identity")
-# life_exp_bar
+# Returns a plotly stacked bar chart containing the dollar amount spent per
+# country for the countries specified in the country_list vector
+# df: dataframe containing spending information. expecting 'big_table'
+create_stacked_bar <- function(df, country_list) {
+  df <- df %>%
+    filter(Country %in% country_list)
+  p <- plot_ly(
+    data = df,
+    x = df$Country,
+    y = df$`Government Spending`,
+    type = "bar",
+    name = "Government Spending",
+    text = paste(df$Lifespan, "Years")
+  ) %>%
+    add_trace(y = df$`Individual Spending`, name = "Individual Spending") %>%
+    layout(
+      yaxis = list(title = "Average Spending in Dollars"),
+      barmode = "stack",
+      title = "Government and Private Spending per Country on Healthcare"
+    )
+  return(p)
+}
+test_bar <- create_stacked_bar(big_table, default_countries)
+test_bar

@@ -7,20 +7,35 @@ navbarPage(
     theme = shinythemes::shinytheme("flatly"),
     title = "Project Life",
     
-    tabPanel("Home",
-             h2("Content placeholder for homepage."),
-             h4("This section will provide an introduction to the project to help
+    tabPanel(
+        "Home",
+        h2("Content placeholder for homepage."),
+        h4(
+            "This section will provide an introduction to the project to help
                 familiarize the user with the problem at hand and what prior knowledge
-                may be required to understand the information.")),
+                may be required to understand the information."
+        )
+    ),
     
     tabPanel(
         "Plot",
-        titlePanel("Data Visualization"),
+        titlePanel("Data Visualizations"),
         
         # Using tabsetPanel to subdivide the plots tab into the main plot and the table
         tabsetPanel(
             type = "tabs",
             tabPanel("Plot",
+                     strong(
+                         p("This section shows the correlation between several independent
+                           variables and the dependent variable of life expectancy. Each
+                           plot is a scatterplot that has been fit to a loess curve to
+                           highlight the trend in the data. The user can select between
+                           five different independent variables, chose to plot a specific
+                           country on the chart, chose whether or not to show the difference
+                           between countries with Universal Healthcare laws, and can adjust
+                           the confidence interval of the curve (the shaded region).
+                           ")
+                         ),
                      # Sidebar viz controls
                      sidebarLayout(
                          sidebarPanel(
@@ -45,7 +60,8 @@ navbarPage(
                              # Select if use double plot
                              radioButtons(
                                  inputId = "use_double_plot",
-                                 label = "Show difference between UHC countries",
+                                 label = "Choose to seperate based on if a country
+                                 has Universal Healthcare laws",
                                  choices = list("No split" = 0, "UHC Split" = 1),
                                  selected = 0
                              ),
@@ -63,7 +79,38 @@ navbarPage(
                      )),
             # Subtab to output table
             tabPanel("Table",
-                     dataTableOutput("table"))
+                     strong(
+                         p(
+                             "This section is a table of all the data we are using, combined
+                             into one large table. The user can chose to search for specific terms,
+                             sort each column, and adjust the number of rows shown."
+                         )
+                     ),
+                     dataTableOutput("table")),
+            tabPanel("Bar Chart",
+                     strong(
+                         p(
+                             "This visualization is so that the user can compare the relative 
+                             healthcare spending of multiple countries. Using the sidebar, one 
+                             can select any country in the dataset, and plot it on the bar chart.
+                             By default, some prominent countries are selected to give a quick comparison. 
+                             The user can also hover over each bar to see the exact amount spent, and the 
+                             average lifespan for that country. Additonally, the user may click on the
+                             labels in the legend to only show one type of spending. " 
+                         )
+                     ),
+                     sidebarLayout(
+                         sidebarPanel(
+                             selectInput(
+                                 inputId = "get_countries",
+                                 label = "Select Countries",
+                                 choices = big_table$Country,
+                                 multiple = TRUE,
+                                 selected = default_countries
+                             )
+                         ),
+                         mainPanel(plotlyOutput("bar_plot"))
+                     ))
         )
     ),
     
@@ -89,8 +136,12 @@ navbarPage(
              strong(
                  p(
                      "1. This project is able to take in 2 values that are very crucial in the field of healthcare,
-            which are its cost and how effective the healthcare system which is show through life expectancy. This project is also did a good job at looking at private spending versus government spending and included data set throughout the world,
-            not just the U.S. Its comprehensiveness is definitely one of the project's strength. However, the project still have weaknesses, the most important is that the dataset can only give us a correlation between spending and life expectancy rather than finding a cause-and-effect relationship between these two values."
+                    which are its cost and how effective the healthcare system which is show through life expectancy.
+                    This project is also did a good job at looking at private spending versus government spending and included data set throughout the world,
+                    not just the U.S. Its comprehensiveness is definitely one of the project's strength.
+                     However, the project still have weaknesses,
+                     the most important is that the dataset can only give us a correlation between spending and life expectancy rather
+                     than finding a cause-and-effect relationship between these two values."
                  ),
                  p(
                      "2. So far the main lesson we learned is that there is a direct posstive correlation between spending, no what private or through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending."
