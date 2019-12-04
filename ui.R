@@ -10,7 +10,7 @@ navbarPage(
     tabPanel(
         "Home",
         h2(
-            "How does individual and government spending relate to life expentancy?"
+            "How does individual and government spending relate to life expectancy?"
         ),
         p(
             "The problem situation is investigating how individual and government spending relates to life expectancy.
@@ -94,7 +94,7 @@ navbarPage(
                              # Select if use double plot
                              radioButtons(
                                  inputId = "use_double_plot",
-                                 label = "Choose to seperate based on if a country
+                                 label = "Choose to separate based on if a country
                                  has Universal Healthcare laws",
                                  choices = list("No split" = 0, "UHC Split" = 1),
                                  selected = 0
@@ -130,7 +130,7 @@ navbarPage(
                              can select any country in the dataset, and plot it on the bar chart.
                              By default, some prominent countries are selected to give a quick comparison.
                              The user can also hover over each bar to see the exact amount spent, and the
-                             average lifespan for that country. Additonally, the user may click on the
+                             average lifespan for that country. Also, the user may click on the
                              labels in the legend to only show one type of spending. "
                     )
                 ),
@@ -161,7 +161,7 @@ navbarPage(
                      than finding a cause-and-effect relationship between these two values."
                  ),
                  p(
-                     "2. From the trend of the data, we learned is that there is a direct posstive correlation between spending, no what private or 
+                     "2. From the trend of the data, we learned is that there is a direct positive correlation between spending, no what private or 
                      through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. 
                      However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending, but the
                      differences between government and private spendings are minimal.

@@ -108,7 +108,7 @@ create_plot <- function(df1, df2) {
 }
 
 # Generates a single smoothed line curve with optional country point
-# df: the Indpendent variable dataframe
+# df: the Independent variable dataframe
 # ci: a confidence interval 0-1
 # filtered_labels: used to match the variables and their labels
 # country_name: the country drawn by a single point
@@ -128,7 +128,7 @@ single_plot <- function(df, ci, filtered_labels, country_name) {
 
 # Generates a plot with two smoothed lines, and an optional country point
 # Lines are differentiated by if the country has uhc or not
-# df: the Indpendent variable dataframe
+# df: the Independent variable dataframe
 # ci: a confidence interval 0-1
 # filtered_labels: used to match the variables and their labels
 # country_name: the country drawn by a single point
