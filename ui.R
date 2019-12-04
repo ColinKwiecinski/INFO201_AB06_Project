@@ -161,10 +161,20 @@ navbarPage(
                      than finding a cause-and-effect relationship between these two values."
                  ),
                  p(
-                     "2. So far the main lesson we learned is that there is a direct posstive correlation between spending, no what private or through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending."
+                     "2. From the trend of the data, we learned is that there is a direct posstive correlation between spending, no what private or 
+                     through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. 
+                     However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending, but the
+                     differences between government and private spendings are minimal.
+                     On the other hand, to a certain point the correlation between spendings to life expectancy plateau out around 80 years, for both government
+                     spendings and individual spendings. As more spendings to a certain extent simply doesn't extend human life expectancy but can only
+                     help to maximize individuals' health. Lastly, it's important to notice the different between countries with universal health care
+                     and countries without, as countries without universal healthcare tends to do better. Universal healthcare might not be as effective due to 
+                     its quality as lesser than private healthcare which is more extensive and appropriate for each individual"
                  ),
                  p(
-                     "3. This project has a lot of potential for more future research in the field of healthcare and government spendings. Future works can include deeper look into how healthcare spending is allocated or if there is other factor involved in correlation with life expectancy."
+                     "3. This project has a lot of potential for more future research in the field of healthcare and government spendings.
+                     Future works can include deeper look into how healthcare spending is allocated or if there is other factor involved in 
+                     correlation with life expectancy. This give an insight into whether healthcare spendings are effective or not."
                  )
              )),
     
