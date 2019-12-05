@@ -152,29 +152,32 @@ navbarPage(
     tabPanel("Conclusion",
              strong(
                  p(
-                     "1. This project is able to take in 2 values that are very crucial in the field of healthcare,
-                    which are its cost and how effective the healthcare system which is show through life expectancy.
-                    This project is also did a good job at looking at private spending versus government spending and included data set throughout the world,
+                     "This project is able to take in 2 values that are very crucial in the field of healthcare -
+                     its cost and how effective the healthcare system which is shown by life expectancy.
+                    This project is also did a good job at examining private spending versus government spending and included data sets to represent most countries in the world,
                     not just the U.S. Its comprehensiveness is definitely one of the project's strength.
-                     However, the project still have weaknesses,
-                     the most important is that the dataset can only give us a correlation between spending and life expectancy rather
-                     than finding a cause-and-effect relationship between these two values."
+                     However, the project still has weaknesses,
+                     the most significant is that the dataset can only give us a correlation between spending and life expectancy rather
+                     than finding a cause-and-effect relationship between these two values. Thus, we must remember that correlation does not imply causation.
+                     There could be external factors at play that are not being considering in this evaulation, for example in wealthier countries, people with more disposable income may opt to choose high standards of healthcare 
+                     through private spending, and they may have better overall health habits, leading to a higher life expectancy that isn't tied to government spending."
                  ),
                  p(
-                     "2. From the trend of the data, we learned is that there is a direct positive correlation between spending, no what private or 
-                     through the government, and life expectancy. Life expectancy is much higher is a country or individuals spend more for it. 
-                     However, individuals spending seems to have lesser of an impact on increasing life expectancy than government spending, but the
-                     differences between government and private spendings are minimal.
-                     On the other hand, to a certain point the correlation between spendings to life expectancy plateau out around 80 years, for both government
-                     spendings and individual spendings. As more spendings to a certain extent simply doesn't extend human life expectancy but can only
-                     help to maximize individuals' health. Lastly, it's important to notice the different between countries with universal health care
-                     and countries without, as countries without universal healthcare tends to do better. Universal healthcare might not be as effective due to 
-                     its quality as lesser than private healthcare which is more extensive and appropriate for each individual"
+                     "From the trend of the data, we learned is that there is a direct positive correlation between spending, no what private or 
+                     through the government, and life expectancy. Life expectancy is much higher in a country when individuals spend more overall for it. 
+                     However, individual spending seems to have lesser of an impact on increasing life expectancy than government spending, but the
+                     differences between government and private spending are minimal.
+                     On the other hand, to a certain point the correlation between spending and life expectancy plateau out around 80 years, for both government
+                     spending and individual spending. More spending to a certain extent simply doesn't extend human life expectancy but can only
+                     help to maximize individuals' health. Lastly, it's important to notice the difference between countries with universal health care
+                     and countries without, as countries with universal healthcare tend to spend more on healthcare overall and have a longer lifespan.
+                     This is seen by using the split function in the visualization, which shoes the countries without UHC as the red line, which tends to have
+                     lower life expectancy in all categories. "
                  ),
                  p(
-                     "3. This project has a lot of potential for more future research in the field of healthcare and government spendings.
-                     Future works can include deeper look into how healthcare spending is allocated or if there is other factor involved in 
-                     correlation with life expectancy. This give an insight into whether healthcare spendings are effective or not."
+                     "This project has a lot of potential for more future research in the field of healthcare and government spending.
+                     Future works can include a deeper look into how healthcare spending is allocated or what some of the other factors affect
+                     life expectancy. This can help develop insights into when healthcare spending is effective or not."
                  )
              )),
     
