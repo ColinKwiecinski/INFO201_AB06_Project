@@ -5,8 +5,8 @@ account: colinkwi
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1498593
-bundleId: 2639173
+bundleId: 2642914
 url: https://colinkwi.shinyapps.io/INFO201_AB06_Project/
-when: 1575441463.45539
+when: 1575528833.03578
 asMultiple: FALSE
 asStatic: FALSE
